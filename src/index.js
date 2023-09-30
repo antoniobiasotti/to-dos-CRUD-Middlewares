@@ -58,9 +58,31 @@ function checksTodoExists(request, response, next) {
   const { id } = request.params;
 
   // Validates the user
-  const user = users.find((user) => {
-    user.username === username;
+  const user = users.find((user) => user.username === username);
+
+  if (!user) {
+    return response.status(404).json({ error: 'User dos not exist!' })
+  }
+  
+  // Validates if the id is a UUID
+  if (!validate(id)) {
+    return response.status(400).json({ error: 'Not a UUID!' })
+  }
+
+  // Validates if the id belongs to a todo
+  const todo = users.find((todo) => {
+    user.todo.id === id;
   })
+
+  if (!todo) {
+    return response.status(404).json({ error: 'Todo no found! '})
+  }
+
+  request.todo = todo;
+
+  request.user = user;
+
+  return next();
 
 }
 
