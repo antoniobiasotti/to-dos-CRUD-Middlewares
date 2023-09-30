@@ -30,20 +30,28 @@ function checksExistsUserAccount(request, response, next) {
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
-  const userAvailability = users.find((user) => {
-    (user.pro === true) || (user.todos.length < 10);
-  })
+  console.log(user);
+  console.log(user.todos.length);
+  console.log(user.pro);
+
+  const userTodosMoreThan10 = users.some((user) => {
+    user.todos.length < 10 && user.pro === false;
+  });
+
+  console.log(userTodosMoreThan10);
   
-  if (!userAvailability) {
-    return response.status(400).json({ error: "Cannot create new Todo. Try upgrading your account to pro!"})
-  }
-  
+  if (userTodosMoreThan10) {
+    return response.status(403).json({ error: "Already more than 10 todos. Upgrade your account to pro!"})
+  };
+
+  request.user = user;
 
   return next();
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers;
+  const { id } = request.params;
 }
 
 function findUserById(request, response, next) {
