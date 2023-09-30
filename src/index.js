@@ -34,7 +34,11 @@ function checksCreateTodosUserAvailability(request, response, next) {
   console.log(user.todos.length);
   console.log(user.pro);
 
-  const userTodosMoreThan10 = users.some((user) => {
+  if (user.todos.length > 9 && user.pro === false) {
+    return response.status(403).json( {error: "Already more than 10 todos. Upgrade your account to pro!"})
+  }
+
+  /* const userTodosMoreThan10 = users.some((user) => {
     user.todos.length < 10 && user.pro === false;
   });
 
@@ -42,7 +46,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
   
   if (userTodosMoreThan10) {
     return response.status(403).json({ error: "Already more than 10 todos. Upgrade your account to pro!"})
-  };
+  }; */
 
   request.user = user;
 
@@ -52,6 +56,12 @@ function checksCreateTodosUserAvailability(request, response, next) {
 function checksTodoExists(request, response, next) {
   const { username } = request.headers;
   const { id } = request.params;
+
+  // Validates the user
+  const user = users.find((user) => {
+    user.username === username;
+  })
+
 }
 
 function findUserById(request, response, next) {
